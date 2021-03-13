@@ -13,7 +13,7 @@ import numpy as np
 # forward propagations
 
 def sigmoid(Z):
-    A = 1/1+np.exp(-Z)
+    A = 1/(1+np.exp(-Z))
     cache = (Z , "sigmoid")
 
     return A, cache
@@ -47,7 +47,7 @@ def tanh(Z):
 def sigmoid_backward(dA , cache):
     
     Z = cache
-    temp = 1/1+np.exp(-Z)
+    temp = 1/(1+np.exp(-Z))
     dZ = dA * temp * (1-temp)
 
     return dZ

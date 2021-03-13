@@ -15,9 +15,14 @@ def dataset(address, input_name, output_name, class_name):
     dataset_X = np.array(dataset[input_name][:]) 
     dataset_Y = np.array(dataset[output_name][:])
     
-    dataset_Y = dataset_Y.reshape((1.dataset_Y.shape[0]))
+    print(dataset_Y.shape)
 
-    train_data, test_data, train_label, test_label = train_test_split(data, label, test_size=0.2, random_state=SEED)
+
+    train_data, test_data, train_label, test_label = train_test_split(dataset_X, dataset_Y, test_size=0.2)
+
+    train_label = train_label.reshape((1, train_label.shape[0]))
+    test_label = test_label.reshape((1, test_label.shape[0]))
+
 
     classes = np.array(dataset[class_name][:]) 
 
@@ -30,7 +35,7 @@ def flatten_dataset(dataset):
     return dataset
 
 
-def L_layer_model(X, Y, layer_dimensions,  lr=0.0025, epoch=1000, print_cost=False):
+def L_layer_model(X, Y, layer_dimensions,  lr=0.0025, epoch=1000,lambd=0.1, print_cost=False):
 
     costs = []
 
@@ -40,21 +45,21 @@ def L_layer_model(X, Y, layer_dimensions,  lr=0.0025, epoch=1000, print_cost=Fal
 
         Y_pred , caches = model_forward(X , parameters)
 
-        cost = cost(Y_pred , Y , "cross_entropy")
+        compute_cost = cost(Y_pred , Y ,parameters,lambd, "cross_entropy")
 
-        gradients = model_backward(Y_pred , Y , caches)
+        gradients = model_backward(Y_pred , Y , caches, lambd)
 
         parameters = update_parameters(parameters , gradients , lr)
 
         if print_cost and i % 50 == 0:
-            print ("Cost after epoch %i: %f" %(i, cost))
+            print ("Cost after epoch %i: %f" %(i, compute_cost))
         if print_cost and i % 50 == 0:
-            costs.append(cost)
+            costs.append(compute_cost)
 
     plt.plot(np.squeeze(costs))
     plt.ylabel('cost')
     plt.xlabel('epochs (per tens)')
-    plt.title("Learning rate =" + str(learning_rate))
+    plt.title("Learning rate =" + str(lr))
     plt.show()
     plt.savefig('results.png',dpi=200)
 
